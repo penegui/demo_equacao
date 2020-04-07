@@ -21,7 +21,7 @@ public class FormulaModeloEquacao {
         this.equacao = equacao;
     }
     
-    public String FormularModeloEquacao(){        
+    public List<ElementoDTO> FormularModeloEquacao(){        
         equacao = equacao.trim().replace(" ", "");
         
         char[] elementos = equacao.toCharArray();
@@ -29,19 +29,17 @@ public class FormulaModeloEquacao {
         return lendoEquacao(elementos);         
     }
     
-    public String lendoEquacao(char[] elementos){       
-        //formanos o dto
+    public List<ElementoDTO> lendoEquacao(char[] elementos){          
         List<ElementoDTO> ElementosEquacao = lendoElemento(elementos);
         
-        String leitura = new String();
-        
+        //String leitura = new String();        
         for(ElementoDTO ElementoEquacao: ElementosEquacao){
             String posicao = (ElementoEquacao.posicao != 0) ? Integer.toString(ElementoEquacao.posicao) : "";
-            //System.out.print(ElementoEquacao.tipo.getElemento() + posicao);
-            leitura += ElementoEquacao.tipo.getElemento()+ posicao;
+            System.out.print(ElementoEquacao.tipo.getElemento() + posicao);
+            //leitura += ElementoEquacao.tipo.getElemento()+ posicao;
         }    
         
-        return leitura;
+        return ElementosEquacao;
     }
     
     public List<ElementoDTO> lendoElemento(char[] elementos){
