@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import regras_algoritmo_santi.FormulaModeloEquacao;
+import regras_algoritmo_santi.InstituiModeloEquacao;
 
 /**
  *
@@ -43,72 +44,8 @@ public class Demo_equacao {
         
         List<ElementoDTO> modeloEquacao = formulaEquacao.FormularModeloEquacao();
         
-        FatorarModeloEquacao(modeloEquacao);
-    }
-    
-    public static void FatorarModeloEquacao(List<ElementoDTO> ElementosEquacao){
+        InstituiModeloEquacao instituiEquacao = new InstituiModeloEquacao(modeloEquacao);     
         
-        Map<String, List<ElementoDTO>> equacaoDividida = dividindoEquacao(ElementosEquacao);
-        
-        List<ElementoDTO> antes = equacaoDividida.get("antesDoIgual");
-        List<ElementoDTO> depois = equacaoDividida.get("depoisDoIgual");    
-        System.out.println("");
-        for(ElementoDTO ElementoEquacao: antes){
-            String posicao = (ElementoEquacao.posicao != 0) ? Integer.toString(ElementoEquacao.posicao) : "";
-            System.out.print(ElementoEquacao.tipo.getElemento() + posicao);
-            //leitura += ElementoEquacao.tipo.getElemento()+ posicao;
-        }  
-        System.out.print("=");
-        
-        for(ElementoDTO ElementoEquacao: depois){
-            String posicao = (ElementoEquacao.posicao != 0) ? Integer.toString(ElementoEquacao.posicao) : "";
-            System.out.print(ElementoEquacao.tipo.getElemento() + posicao);
-            //leitura += ElementoEquacao.tipo.getElemento()+ posicao;
-        }  
-        
-        System.out.println("");
-    }
-    
-    public static Map<String, List<ElementoDTO>>  dividindoEquacao(List<ElementoDTO> ElementosEquacao){            
-        List<ElementoDTO> antesDoIgual = new ArrayList<ElementoDTO>();
-        List<ElementoDTO> depoisDoIgual = new ArrayList<ElementoDTO>();
-        boolean pasouDoIgual = false;                
-        
-        for(ElementoDTO ElementoEquacao : ElementosEquacao){
-            if(ElementoEquacao.tipo == TipoElemento.igual)
-                pasouDoIgual = true;
-            else if(!pasouDoIgual){                
-                antesDoIgual = organizandoElementos(antesDoIgual, ElementoEquacao);
-            }
-            else
-                depoisDoIgual = organizandoElementos(depoisDoIgual, ElementoEquacao);     
-        }      
-        
-        Map<String, List<ElementoDTO>> equacaoDividida = new HashMap<>();        
-        equacaoDividida.put("antesDoIgual", antesDoIgual);
-        equacaoDividida.put("depoisDoIgual", depoisDoIgual);
-        
-        return equacaoDividida;
-    }
-    
-    public static List<ElementoDTO> organizandoElementos(List<ElementoDTO> elementos, ElementoDTO elemento){
-        if(elemento.tipo == TipoElemento.variavel){
-            elementos.add(0, elemento);
-            
-            if(elementos.size() != 1){         
-                elementos.add(0, elementos.get(elementos.size() - 1));
-                elementos.remove(elementos.size() - 1);
-            }
-            else{
-                ElementoDTO maisNaFrente = new ElementoDTO();
-                maisNaFrente.setElementoDTO("+", TipoElemento.mais, 0);
-                elementos.add(0, maisNaFrente);
-            }                
-        }
-        else{
-            elementos.add(elemento);
-        }       
-        
-        return elementos;
-    }
+        instituiEquacao.InstituirModeloEquacao();
+    }      
 }
