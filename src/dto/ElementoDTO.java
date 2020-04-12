@@ -11,7 +11,7 @@ import enums.TipoElemento;
  *
  * @author davim
  */
-public class ElementoDTO implements Comparable<ElementoDTO> {
+public class ElementoDTO{
     public String elemento;
     public TipoElemento tipo;
     public int posicao;   
@@ -22,16 +22,6 @@ public class ElementoDTO implements Comparable<ElementoDTO> {
         this.posicao = posicao;
         
         return this;
-    }
-
-    @Override 
-    public int compareTo(ElementoDTO outroElementoDTO) { 
-        if (this.tipo == TipoElemento.variavel && outroElementoDTO.tipo == TipoElemento.numero) 
-            return -1; 
-        if (this.tipo == TipoElemento.numero && outroElementoDTO.tipo == TipoElemento.variavel) { 
-            return 1; 
-        } 
-        return 0; 
     }
     
     public TipoElemento getTipo(){
