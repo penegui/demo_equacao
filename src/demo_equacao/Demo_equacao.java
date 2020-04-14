@@ -46,6 +46,6 @@ public class Demo_equacao {
         
         InstituiModeloEquacao instituiEquacao = new InstituiModeloEquacao(modeloEquacao);     
         
-        instituiEquacao.InstituirModeloEquacao();
+        instituiEquacao.instituirModeloEquacao();
     }      
 }

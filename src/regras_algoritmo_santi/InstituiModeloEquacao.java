@@ -18,12 +18,19 @@ import java.util.Map;
  */
 public class InstituiModeloEquacao {
     private List<ElementoDTO> elementosEquacao;
+    private ElementoDTO ultimoElementoController;
+    private ElementoDTO penultimoElementoController;
     
     public InstituiModeloEquacao(List<ElementoDTO> elementosEquacao){
         this.elementosEquacao = elementosEquacao;
     }
     
-    public void InstituirModeloEquacao(){
+    private void controllerElemento(ElementoDTO elemento){
+        penultimoElementoController = ultimoElementoController;
+        ultimoElementoController = elemento;
+    }
+    
+    public void instituirModeloEquacao(){
         
         Map<String, List<ElementoDTO>> equacaoDividida = dividindoEquacao(elementosEquacao);
         
@@ -53,20 +60,23 @@ public class InstituiModeloEquacao {
         
         System.out.println("");
         
-        for(ElementoDTO ElementoEquacao: equacaoDividida.get("equacaoVariavelAntesDaIgualdade")){
+        for(ElementoDTO ElementoEquacao: equacaoDividida.get("equacaoVariavelDepoisDaIgualdade")){
             String posicao = (ElementoEquacao.posicao != 0) ? Integer.toString(ElementoEquacao.posicao) : "";
             System.out.print(ElementoEquacao.tipo.getElemento() + posicao);
             //leitura += ElementoEquacao.tipo.getElemento()+ posicao;
         }  
     }
     
-    public Map<String, List<ElementoDTO>>  dividindoEquacao(List<ElementoDTO> elementosEquacao){   
+    public Map<String, List<ElementoDTO>> dividindoEquacao(List<ElementoDTO> elementosEquacao){   
         
         List<ElementoDTO> antesDaIgualdade = new ArrayList<ElementoDTO>();
         List<ElementoDTO> igualdade = new ArrayList<ElementoDTO>();
         List<ElementoDTO> depoisDaIgualdade = new ArrayList<ElementoDTO>();                   
         
         for(ElementoDTO ElementoEquacao : elementosEquacao){
+            //quarda os ultimos elemento mechidos
+            controllerElemento(ElementoEquacao);
+            
             if(ElementoEquacao.tipo == TipoElemento.igual)
                 igualdade.add(ElementoEquacao);                
             else if(igualdade.isEmpty()){                
@@ -79,9 +89,11 @@ public class InstituiModeloEquacao {
         Map<String, List<ElementoDTO>> equacaoDividida = new HashMap<>();        
         equacaoDividida.put("antesDaIgualdade", antesDaIgualdade);
         equacaoDividida.put("equacaoNumerosAntesDaIgualdade", buscaSoNumeroEquacao(antesDaIgualdade));
-        equacaoDividida.put("equacaoVariavelAntesDaIgualdade", BuscaSoVariaveisEquacao(antesDaIgualdade));        
+        equacaoDividida.put("equacaoVariavelAntesDaIgualdade", buscaSoVariaveisEquacao(antesDaIgualdade));        
         equacaoDividida.put("igualdade", igualdade);
         equacaoDividida.put("depoisDaIgualdade", depoisDaIgualdade);
+        equacaoDividida.put("equacaoNumerosDepoisDaIgualdade", buscaSoNumeroEquacao(depoisDaIgualdade));
+        equacaoDividida.put("equacaoVariavelDepoisDaIgualdade", buscaSoVariaveisEquacao(depoisDaIgualdade)); 
         
         return equacaoDividida;
     }
@@ -125,11 +137,20 @@ public class InstituiModeloEquacao {
             return resultadoseguencia != null ? resultadoseguencia : elementos;
         }
         else if(elemento.tipo == TipoElemento.dividir || elemento.tipo == TipoElemento.vezis){
-            elementos.add(0, elementos.get(elementos.size() - 1));
-            elementos.remove(elementos.size() - 1);
+            if(penultimoElementoController.tipo == TipoElemento.numero){
+                elementos.add(0, elementos.get(elementos.size() - 1));
+                elementos.remove(elementos.size() - 1);
             
-            List<ElementoDTO> resultadoseguencia =  jogaElementoVariavelParaFrenteDaEquacao(elementos, false);
-            return resultadoseguencia != null ? resultadoseguencia : elementos;
+            
+                List<ElementoDTO> resultadoseguencia =  jogaElementoVariavelParaFrenteDaEquacao(elementos, false);
+                return resultadoseguencia != null ? resultadoseguencia : elementos;
+            }else{
+                elementos.add(3, elementos.get(0));
+                elementos.remove(0);
+                elementos.add(2,elemento);
+                elementos.remove(elementos.size() - 1);
+                return  null;
+            }
         }else{
             return null;
         }      
@@ -142,7 +163,7 @@ public class InstituiModeloEquacao {
                 elementos.add(0, maisNaFrente);
             }
             
-            if(!elementos.isEmpty() && (elementos.get(elementos.size() - 1).tipo == TipoElemento.dividir || elementos.get(elementos.size() - 1).tipo == TipoElemento.vezis)){
+            if(!elementos.isEmpty() && (elementos.get(elementos.size() - 1).tipo == TipoElemento.dividir || elementos.get(elementos.size() - 1).tipo == TipoElemento.vezis) && penultimoElementoController.tipo == TipoElemento.variavel){
                 elementos.add(2, elementos.get(elementos.size() - 1));
                 elementos.remove(elementos.size() - 1);
                 elementos.add(3,elemento);
@@ -168,7 +189,7 @@ public class InstituiModeloEquacao {
         return parteEquacaoNumero;
     }
     
-    public List<ElementoDTO> BuscaSoVariaveisEquacao(List<ElementoDTO> elementos){
+    public List<ElementoDTO> buscaSoVariaveisEquacao(List<ElementoDTO> elementos){
         List<ElementoDTO> parteEquascaoVariavel = new ArrayList<>();
         
         for(int i = 0; i <= elementos.size() - 1; i++){            
