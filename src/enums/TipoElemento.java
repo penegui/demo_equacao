@@ -20,7 +20,9 @@ public enum TipoElemento {
     mais("+"),
     menos("-"),
     vezis("*"),
-    dividir("/");    
+    dividir("/"),
+    sinal("ª"),
+    inverteSinal("&");
  
     public String elemento;
     
